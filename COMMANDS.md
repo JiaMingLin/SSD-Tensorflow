@@ -3,7 +3,7 @@
 # =========================================================================== #
 rm events* graph* model* checkpoint
 mv events* graph* model* checkpoint ./log
-
+'''
 DATASET_DIR=/media/paul/DataExt4/PascalVOC/rawdata/VOC2012/trainval/
 OUTPUT_DIR=/media/paul/DataExt4/PascalVOC/dataset
 python tf_convert_data.py \
@@ -11,16 +11,18 @@ python tf_convert_data.py \
     --dataset_dir=${DATASET_DIR} \
     --output_name=voc_2012_train \
     --output_dir=${OUTPUT_DIR}
-
+'''
+'''
 CAFFE_MODEL=/media/paul/DataExt4/PascalVOC/training/ckpts/SSD_300x300_VOC0712/VGG_VOC0712_SSD_300x300_iter_120000.caffemodel
 python caffe_to_tensorflow.py \
     --model_name=ssd_300_vgg \
     --num_classes=21 \
     --caffemodel_path=${CAFFE_MODEL}
-
+'''
 # =========================================================================== #
 # VGG-based SSD network
 # =========================================================================== #
+'''
 DATASET_DIR=/media/paul/DataExt4/PascalVOC/dataset
 TRAIN_DIR=./logs/ssd_300_vgg_3
 CHECKPOINT_PATH=./checkpoints/ssd_300_vgg.ckpt
@@ -38,7 +40,9 @@ python train_ssd_network.py \
     --learning_rate=0.001 \
     --learning_rate_decay_factor=0.95 \
     --batch_size=32
+'''
 
+'''
 DATASET_DIR=/media/paul/DataExt4/PascalVOC/dataset
 TRAIN_DIR=./logs/ssd_300_vgg_3
 EVAL_DIR=${TRAIN_DIR}/eval
@@ -52,8 +56,9 @@ python eval_ssd_network.py \
     --wait_for_checkpoints=True \
     --batch_size=1 \
     --max_num_batches=500
+'''
 
-
+'''
 DATASET_DIR=/media/paul/DataExt4/PascalVOC/dataset
 EVAL_DIR=./logs/ssd_300_vgg_1_eval
 CHECKPOINT_PATH=./checkpoints/ssd_300_vgg.ckpt
@@ -68,8 +73,9 @@ python eval_ssd_network.py \
     --checkpoint_path=${CHECKPOINT_PATH} \
     --batch_size=1 \
     --max_num_batches=10
+'''
 
-
+'''
 DATASET_DIR=/media/paul/DataExt4/PascalVOC/dataset
 EVAL_DIR=./logs/ssd_300_vgg_1_eval
 CHECKPOINT_PATH=./checkpoints/VGG_VOC0712_SSD_512x512_ft_iter_120000.ckpt
@@ -82,10 +88,12 @@ python eval_ssd_network.py \
     --checkpoint_path=${CHECKPOINT_PATH} \
     --batch_size=1 \
     --max_num_batches=10
+'''
 
 # =========================================================================== #
 # Fine tune VGG-based SSD network
 # =========================================================================== #
+'''
 DATASET_DIR=/media/paul/DataExt4/PascalVOC/dataset
 TRAIN_DIR=/media/paul/DataExt4/PascalVOC/training/logs/ssd_300_vgg_6
 CHECKPOINT_PATH=./checkpoints/vgg_16.ckpt
@@ -105,7 +113,9 @@ python train_ssd_network.py \
     --learning_rate=0.001 \
     --learning_rate_decay_factor=0.94 \
     --batch_size=32
+'''
 
+'''
 DATASET_DIR=/media/paul/DataExt4/PascalVOC/dataset
 TRAIN_DIR=/media/paul/DataExt4/PascalVOC/training/logs/ssd_300_vgg_13
 CHECKPOINT_PATH=./checkpoints/vgg_16.ckpt
@@ -126,7 +136,9 @@ python train_ssd_network.py \
     --learning_rate=0.001 \
     --learning_rate_decay_factor=0.94 \
     --batch_size=32
+'''
 
+'''
 DATASET_DIR=/media/paul/DataExt4/PascalVOC/dataset
 TRAIN_DIR=/media/paul/DataExt4/PascalVOC/training/logs/ssd_300_vgg_2
 CHECKPOINT_PATH=./checkpoints/vgg_16.ckpt
@@ -145,7 +157,9 @@ python train_ssd_network.py \
     --learning_rate=0.0005 \
     --learning_rate_decay_factor=0.96 \
     --batch_size=32
+'''
 
+'''
 EVAL_DIR=${TRAIN_DIR}/eval
 python eval_ssd_network.py \
     --eval_dir=${EVAL_DIR} \
@@ -156,11 +170,12 @@ python eval_ssd_network.py \
     --checkpoint_path=${TRAIN_DIR} \
     --wait_for_checkpoints=True \
     --batch_size=1
-
+'''
 
 # =========================================================================== #
 # Inception v3
 # =========================================================================== #
+'''
 DATASET_DIR=/media/paul/DataExt4/ImageNet/Dataset
 DATASET_DIR=../datasets/ImageNet
 TRAIN_DIR=./logs/inception_v3
@@ -179,8 +194,9 @@ python train_image_classifier.py \
     --optimizer=rmsprop \
     --learning_rate=0.00005 \
     --batch_size=4
+'''
 
-
+'''
 CHECKPOINT_PATH=/media/paul/DataExt4/ImageNet/Training/logs
 CHECKPOINT_PATH=/media/paul/DataExt4/ImageNet/Training/ckpts/inception_v3.ckpt
 DATASET_DIR=/media/paul/DataExt4/ImageNet/Dataset
@@ -191,11 +207,12 @@ python eval_image_classifier.py \
     --dataset_name=imagenet \
     --dataset_split_name=validation \
     --model_name=inception_v3
-
+'''
 
 # =========================================================================== #
 # VGG 16 and 19
 # =========================================================================== #
+'''
 CHECKPOINT_PATH=/media/paul/DataExt4/ImageNet/Training/ckpts/vgg_19.ckpt
 DATASET_DIR=/media/paul/DataExt4/ImageNet/Dataset
 python eval_image_classifier.py \
@@ -206,8 +223,9 @@ python eval_image_classifier.py \
     --labels_offset=1 \
     --dataset_split_name=validation \
     --model_name=vgg_19
+'''
 
-
+'''
 CHECKPOINT_PATH=/media/paul/DataExt4/ImageNet/Training/ckpts/vgg_16.ckpt
 DATASET_DIR=/media/paul/DataExt4/ImageNet/Dataset
 python eval_image_classifier.py \
@@ -218,11 +236,12 @@ python eval_image_classifier.py \
     --labels_offset=1 \
     --dataset_split_name=validation \
     --model_name=vgg_16
-
+'''
 
 # =========================================================================== #
 # Xception
 # =========================================================================== #
+'''
 DATASET_DIR=../datasets/ImageNet
 DATASET_DIR=/media/paul/DataExt4/ImageNet/Dataset
 TRAIN_DIR=./logs/xception
@@ -242,7 +261,9 @@ python train_image_classifier.py \
     --optimizer=rmsprop \
     --learning_rate=0.0001 \
     --batch_size=32
+'''
 
+'''
 python train_image_classifier.py \
     --train_dir=${TRAIN_DIR} \
     --dataset_dir=${DATASET_DIR} \
@@ -256,8 +277,9 @@ python train_image_classifier.py \
     --optimizer=rmsprop \
     --learning_rate=0.00005 \
     --batch_size=1
+'''
 
-
+'''
 CHECKPOINT_PATH=./checkpoints/xception_weights_tf_dim_ordering_tf_kernels.ckpt
 CHECKPOINT_PATH=./logs/xception
 CHECKPOINT_PATH=./checkpoints/xception_weights_tf_dim_ordering_tf_kernels.ckpt
@@ -272,23 +294,27 @@ python eval_image_classifier.py \
     --dataset_split_name=validation \
     --model_name=xception \
     --max_num_batches=10
+'''
 
-
+'''
 CHECKPOINT_PATH=./checkpoints/xception_weights_tf_dim_ordering_tf_kernels.h5
 python ckpt_keras_to_tensorflow.py \
     --model_name=xception_keras \
     --num_classes=1000 \
     --checkpoint_path=${CHECKPOINT_PATH}
-
+'''
 
 # =========================================================================== #
 # Dception
 # =========================================================================== #
+'''
 DATASET_DIR=../datasets/ImageNet
 DATASET_DIR=/media/paul/DataExt4/ImageNet/Dataset
 TRAIN_DIR=./logs/dception
 CHECKPOINT_PATH=./checkpoints/xception_weights_tf_dim_ordering_tf_kernels.ckpt
+'''
 
+'''
 python train_image_classifier.py \
     --train_dir=${TRAIN_DIR} \
     --dataset_dir=${DATASET_DIR} \
@@ -303,7 +329,9 @@ python train_image_classifier.py \
     --optimizer=rmsprop \
     --learning_rate=0.00005 \
     --batch_size=32
+'''
 
+'''
 python train_image_classifier.py \
     --train_dir=${TRAIN_DIR} \
     --dataset_dir=${DATASET_DIR} \
@@ -317,8 +345,9 @@ python train_image_classifier.py \
     --optimizer=rmsprop \
     --learning_rate=0.00005 \
     --batch_size=1
+'''
 
-
+'''
 CHECKPOINT_PATH=./checkpoints/xception_weights_tf_dim_ordering_tf_kernels.ckpt
 CHECKPOINT_PATH=./logs/dception
 DATASET_DIR=../datasets/ImageNet
@@ -331,3 +360,4 @@ python eval_image_classifier.py \
     --dataset_name=imagenet \
     --dataset_split_name=validation \
     --model_name=dception
+'''
