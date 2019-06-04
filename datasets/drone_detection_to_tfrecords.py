@@ -111,14 +111,18 @@ def _process_image(directory, name):
             truncated.append(0)
 
         bbox = obj.find('bndbox')
-        ymin = float(bbox.find('ymin').text) / shape[0] if float(bbox.find('ymin').text) > 0 else 0
-        xmin = float(bbox.find('xmin').text) / shape[1] if float(bbox.find('xmin').text) > 0 else 0
-        ymax = float(bbox.find('ymax').text) / shape[0] if float(bbox.find('ymax').text) > 0 else 0
-        xmax = float(bbox.find('xmax').text) / shape[1] if float(bbox.find('xmax').text) > 0 else 0
-        bboxes.append((max(ymin,0),
-                       max(xmin,0),
-                       min(ymax,1.0),
-                       min(xmax,1.0)
+        ymin = max(float(bbox.find('ymin').text) / shape[0], 0)
+        xmin = max(float(bbox.find('xmin').text) / shape[1], 0)
+        ymax = min(float(bbox.find('ymax').text) / shape[0], 1.0)
+        xmax = min(float(bbox.find('xmax').text) / shape[1], 1.0)
+
+        if (ymin < 0 or ymin > 1) or (xmin < 0 or xmin > 1) or (xmax < 0 or xmax > 1) or (ymax < 0 or ymax > 1):
+            print("ymin: {}, xmin: {}, ymax: {}, xmax: {}".format(ymin, xmin, ymax, xmax))
+
+        bboxes.append((ymin,
+                       xmin,
+                       ymax,
+                       xmax
                        ))
     return image_data, shape, bboxes, labels, labels_text, difficult, truncated
 
