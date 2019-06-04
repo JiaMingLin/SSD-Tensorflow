@@ -168,7 +168,7 @@ def _add_to_tfrecord(dataset_dir, name, tfrecord_writer):
       name: Image name to add to the TFRecord;
       tfrecord_writer: The TFRecord writer to use for writing.
     """
-    image_data, shape, bboxes, labels, labels_text, difficult = \
+    image_data, shape, bboxes, labels, labels_text, difficult, truncated = \
         _process_image(dataset_dir, name)
     
     example = _convert_to_example(image_data, labels, labels_text,
