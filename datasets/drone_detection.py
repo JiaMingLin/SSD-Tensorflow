@@ -53,7 +53,7 @@ def get_split(split_name, dataset_dir, file_pattern=None, reader=None):
     Raises:
         ValueError: if `split_name` is not a valid train/test split.
     """
-    if split_name not in split_to_sizes:
+    if split_name not in SPLITS_TO_SIZES:
         raise ValueError('split name %s was not recognized.' % split_name)
     file_pattern = os.path.join(dataset_dir, file_pattern % split_name)
 
@@ -98,7 +98,7 @@ def get_split(split_name, dataset_dir, file_pattern=None, reader=None):
             data_sources=file_pattern,
             reader=reader,
             decoder=decoder,
-            num_samples=split_to_sizes[split_name],
-            items_to_descriptions=items_to_descriptions,
-            num_classes=num_classes,
+            num_samples=SPLITS_TO_SIZES[split_name],
+            items_to_descriptions=ITEMS_TO_DESCRIPTIONS,
+            num_classes=NUM_CLASSES,
             labels_to_names=labels_to_names)
