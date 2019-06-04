@@ -117,6 +117,7 @@ def _process_image(directory, name):
         xmax = min(float(bbox.find('xmax').text) / shape[1], 1.0)
 
         if (ymin < 0 or ymin > 1) or (xmin < 0 or xmin > 1) or (xmax < 0 or xmax > 1) or (ymax < 0 or ymax > 1):
+            print(name)
             print("ymin: {}, xmin: {}, ymax: {}, xmax: {}".format(ymin, xmin, ymax, xmax))
 
         bboxes.append((ymin,
