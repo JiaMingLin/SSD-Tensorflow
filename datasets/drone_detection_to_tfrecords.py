@@ -114,7 +114,7 @@ def _process_image(directory, name):
         ymin = float(bbox.find('ymin').text) / shape[0] if float(bbox.find('ymin').text) > 0 else 0
         xmin = float(bbox.find('xmin').text) / shape[1] if float(bbox.find('xmin').text) > 0 else 0
         ymax = float(bbox.find('ymax').text) / shape[0] if float(bbox.find('ymax').text) > 0 else 0
-        xmax = float(bbox.find('xmax').text) / shape[0] if float(bbox.find('xmax').text) > 0 else 0
+        xmax = float(bbox.find('xmax').text) / shape[1] if float(bbox.find('xmax').text) > 0 else 0
         bboxes.append((ymin,
                        xmin,
                        ymax,
