@@ -18,15 +18,15 @@ a TensorFlow pipeline.
 Usage:
 ```shell
 python tf_convert_data.py \
-    --dataset_name=pascalvoc \
+    --dataset_name=pascalvoc,dota \
     --dataset_dir=/tmp/pascalvoc \
-    --output_name=pascalvoc \
+    --output_name=pascalvoc,dota \
     --output_dir=/tmp/
 ```
 """
 import tensorflow as tf
 
-from datasets import pascalvoc_to_tfrecords
+from datasets import pascalvoc_to_tfrecords, dota_to_tfrecords
 
 FLAGS = tf.app.flags.FLAGS
 
@@ -52,6 +52,8 @@ def main(_):
 
     if FLAGS.dataset_name == 'pascalvoc':
         pascalvoc_to_tfrecords.run(FLAGS.dataset_dir, FLAGS.output_dir, FLAGS.output_name)
+    elif FLAGS.dataset_name == 'dota':
+        dota_to_tfrecords.run(FLAGS.dataset_dir, FLAGS.output_dir, FLAGS.output_name)
     else:
         raise ValueError('Dataset [%s] was not recognized.' % FLAGS.dataset_name)
 
