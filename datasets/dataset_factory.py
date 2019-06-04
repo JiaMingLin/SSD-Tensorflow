@@ -30,7 +30,8 @@ datasets_map = {
     'imagenet': imagenet,
     'pascalvoc_2007': pascalvoc_2007,
     'pascalvoc_2012': pascalvoc_2012,
-    'dota': dota
+    'dota': dota,
+    'drone_action': drone_action
 }
 
 
