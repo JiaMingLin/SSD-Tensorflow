@@ -25,6 +25,8 @@ from datasets import pascalvoc_2007
 from datasets import pascalvoc_2012
 
 from datasets import dota
+from datasets import drone_detection
+
 datasets_map = {
     'cifar10': cifar10,
     'imagenet': imagenet,
