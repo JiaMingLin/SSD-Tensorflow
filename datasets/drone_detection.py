@@ -31,10 +31,10 @@ ITEMS_TO_DESCRIPTIONS = {
 
 SPLITS_TO_SIZES = {
     'train': 852,
-    'test': 3690
+    'test': 3655
 }
 
-NUM_CLASSES = 16
+NUM_CLASSES = 14
 
 def get_split(split_name, dataset_dir, file_pattern=None, reader=None):
     """Gets a dataset tuple with instructions for reading Pascal VOC dataset.
