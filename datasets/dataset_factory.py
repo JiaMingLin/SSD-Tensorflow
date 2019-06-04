@@ -31,7 +31,7 @@ datasets_map = {
     'pascalvoc_2007': pascalvoc_2007,
     'pascalvoc_2012': pascalvoc_2012,
     'dota': dota,
-    'drone_action': drone_action
+    'drone_detection': drone_detection
 }
 
 

@@ -180,7 +180,7 @@ def _get_output_filename(output_dir, name, idx):
     return '%s/%s_%03d.tfrecord' % (output_dir, name, idx)
 
 
-def run(dataset_dir, output_dir, name='drone_action_train', shuffling=False):
+def run(dataset_dir, output_dir, name='drone_detection_train', shuffling=False):
     """Runs the conversion operation.
     Args:
       dataset_dir: The dataset directory where the dataset is stored.
@@ -219,4 +219,4 @@ def run(dataset_dir, output_dir, name='drone_action_train', shuffling=False):
     # Finally, write the labels file:
     # labels_to_class_names = dict(zip(range(len(_CLASS_NAMES)), _CLASS_NAMES))
     # dataset_utils.write_label_file(labels_to_class_names, dataset_dir)
-print('\nFinished converting the Pascal VOC dataset!')
+print('\nFinished converting the Pascal DroneDetection dataset!')
