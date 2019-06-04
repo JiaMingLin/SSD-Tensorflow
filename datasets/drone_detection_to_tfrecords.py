@@ -219,4 +219,4 @@ def run(dataset_dir, output_dir, name='drone_detection_train', shuffling=False):
     # Finally, write the labels file:
     # labels_to_class_names = dict(zip(range(len(_CLASS_NAMES)), _CLASS_NAMES))
     # dataset_utils.write_label_file(labels_to_class_names, dataset_dir)
-print('\nFinished converting the Pascal DroneDetection dataset!')
+print('\nFinished converting the DroneDetection dataset!')
