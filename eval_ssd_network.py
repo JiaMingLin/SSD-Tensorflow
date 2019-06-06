@@ -253,12 +253,14 @@ def main(_):
             aps_voc07 = {}
             aps_voc12 = {}
             for c in tp_fp_metric[0].keys():
+                # retrieve label name for display
+                label_name = dataset_factory.get_label_name_by_code(c, FLAGS.dataset_name)
                 # Precison and recall values.
                 prec, rec = tfe.precision_recall(*tp_fp_metric[0][c])
 
                 # Average precision VOC07.
                 v = tfe.average_precision_voc07(prec, rec)
-                summary_name = 'AP_VOC07/%s' % c
+                summary_name = 'AP_VOC07/%s' % label_name
                 op = tf.summary.scalar(summary_name, v, collections=[])
                 # op = tf.Print(op, [v], summary_name)
                 tf.add_to_collection(tf.GraphKeys.SUMMARIES, op)
@@ -266,7 +268,7 @@ def main(_):
 
                 # Average precision VOC12.
                 v = tfe.average_precision_voc12(prec, rec)
-                summary_name = 'AP_VOC12/%s' % c
+                summary_name = 'AP_VOC12/%s' % label_name
                 op = tf.summary.scalar(summary_name, v, collections=[])
                 # op = tf.Print(op, [v], summary_name)
                 tf.add_to_collection(tf.GraphKeys.SUMMARIES, op)
