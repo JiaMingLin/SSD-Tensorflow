@@ -58,7 +58,7 @@ DIRECTORY_IMAGES = 'images/'
 RANDOM_SEED = 4242
 SAMPLES_PER_FILES = 200
 
-ACTION_LABELS = {
+LABEL_MAP = {
     'none': 0,
     'baseball':1, 'basketball':2, 'bike':3, 'climb_stair':4, 
              'eat':5, 'jump':6, 'raft':7, 'ride_motor':8, 'run':9, 
@@ -98,7 +98,7 @@ def _process_image(directory, name):
     truncated = []
     for obj in root.findall('object'):
         label = obj.find('name').text
-        labels.append(int(ACTION_LABELS[label]))
+        labels.append(int(LABEL_MAP[label]))
         labels_text.append(label.encode('ascii'))
 
         if obj.find('difficult'):

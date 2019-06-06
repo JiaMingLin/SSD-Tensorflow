@@ -25,7 +25,7 @@ from datasets import pascalvoc_2007
 from datasets import pascalvoc_2012
 
 from datasets import dota
-from datasets import drone_detection
+from datasets import drone_detection, drone_detection_to_tfrecords
 
 datasets_map = {
     'cifar10': cifar10,
@@ -34,6 +34,15 @@ datasets_map = {
     'pascalvoc_2012': pascalvoc_2012,
     'dota': dota,
     'drone_detection': drone_detection
+}
+
+datasets_map_tf = {
+    'cifar10': cifar10,
+    'imagenet': imagenet,
+    'pascalvoc_2007': pascalvoc_2007,
+    'pascalvoc_2012': pascalvoc_2012,
+    'dota': dota,
+    'drone_detection': drone_detection_to_tfrecords
 }
 
 
@@ -58,3 +67,11 @@ def get_dataset(name, split_name, dataset_dir, file_pattern=None, reader=None):
                                         dataset_dir,
                                         file_pattern,
                                         reader)
+
+def get_label_name_by_code(code, dataset_name):
+    dataset_handler = datasets_map_tf[dataset_name]
+    code = dataset_handler.LABEL_MAP.keys()
+    name = dataset_handler.LABEL_MAP.values()
+
+    reversed_label_map = dict(zip(code,name))
+    return reversed_label_map[code]
