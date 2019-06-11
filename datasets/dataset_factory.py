@@ -68,10 +68,11 @@ def get_dataset(name, split_name, dataset_dir, file_pattern=None, reader=None):
                                         file_pattern,
                                         reader)
 
-def get_label_name_by_code(code, dataset_name):
+def get_label_name_by_code(input_code, dataset_name):
     dataset_handler = datasets_map_tf[dataset_name]
-    code = dataset_handler.LABEL_MAP.keys()
-    name = dataset_handler.LABEL_MAP.values()
+    name = dataset_handler.LABEL_MAP.keys()
+    code = dataset_handler.LABEL_MAP.values()
 
     reversed_label_map = dict(zip(code,name))
-    return reversed_label_map[code]
+    print(reversed_label_map)
+    return reversed_label_map[input_code]
