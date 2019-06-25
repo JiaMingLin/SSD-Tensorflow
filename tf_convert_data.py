@@ -26,7 +26,7 @@ python tf_convert_data.py \
 """
 import tensorflow as tf
 
-from datasets import pascalvoc_to_tfrecords, dota_to_tfrecords, drone_detection_to_tfrecords
+from datasets import pascalvoc_to_tfrecords, dota_to_tfrecords, drone_detection_to_tfrecords, ucf24_detection_to_tfrecords
 
 FLAGS = tf.app.flags.FLAGS
 
@@ -56,6 +56,8 @@ def main(_):
         dota_to_tfrecords.run(FLAGS.dataset_dir, FLAGS.output_dir, FLAGS.output_name)
     elif FLAGS.dataset_name == 'drone_detection':
         drone_detection_to_tfrecords.run(FLAGS.dataset_dir, FLAGS.output_dir, FLAGS.output_name)
+    elif FLAGS.dataset_name == 'ucf24':
+        ucf24_detection_to_tfrecords.run(FLAGS.dataset_dir, FLAGS.output_dir, FLAGS.output_name)
     else:
         raise ValueError('Dataset [%s] was not recognized.' % FLAGS.dataset_name)
 
