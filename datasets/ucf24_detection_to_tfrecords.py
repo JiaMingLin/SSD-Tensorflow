@@ -179,29 +179,25 @@ def run(dataset_dir, output_dir, name='ucf_train', shuffling=False):
         random.shuffle(video_list)
 
     # Process dataset files.
-    i = 0; j=0; k=0
+    i=0; j=0; k=0
     fidx = 0
-    video_path = video_list[i]
+    video_path = video_list.pop()
     video_frame_list = _get_frames_filename(video_path)
     tf_filename = _get_output_filename(output_dir, name, fidx)
-    while i < len(video_list):
+    while len(video_list) > 0:
         sys.stdout.write('\r>> Converting video %d/%d' % (i+1, len(video_list)))
         sys.stdout.flush()
-        print(video_list[i])
-        i += 1
         with tf.python_io.TFRecordWriter(tf_filename) as tfrecord_writer:
-            nframes = len(video_frame_list)
-            while j < SAMPLES_PER_FILES and k < nframes:
+            while j < SAMPLES_PER_FILES and len(video_frame_list) > 0:
 
                 frame_code = video_frame_list.pop()
-                _add_to_tfrecord(dataset_dir, frame_code, tfrecord_writer)
+                _add_to_tfrecord(video_path, frame_code, tfrecord_writer)
                 j += 1
-                k += 1
 
             # finish on video, new one
             if len(video_frame_list) == 0:
                 i += 1
-                video_path = video_list[i]
+                video_path = video_list.pop()
                 video_frame_list = _get_frames_filename(video_path)
             
             # if tfrecord is full
