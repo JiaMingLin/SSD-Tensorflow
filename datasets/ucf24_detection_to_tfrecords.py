@@ -10,11 +10,11 @@ from datasets.dataset_utils import int64_feature, float_feature, bytes_feature
 
 # Original dataset organisation.
 DIRECTORY_ANNOTATIONS = 'annotations/'
-DIRECTORY_IMAGES = 'Frames/'
+DIRECTORY_IMAGES = 'data/UCF101_24_Frame/Frames/'
 
 # TFRecords convertion parameters.
 RANDOM_SEED = 4242
-SAMPLES_PER_FILES = 400
+SAMPLES_PER_FILES = 200
 
 LABEL_MAP = {
     'none': 0,
@@ -139,7 +139,8 @@ def _add_to_tfrecord(dataset_dir, name, tfrecord_writer):
       name: Image name to add to the TFRecord;
       tfrecord_writer: The TFRecord writer to use for writing.
     """
-    print(os.path.join(DIRECTORY_IMAGES, dataset_dir, '{}.jpg'.format(name)))
+    print('dataset_dir: ', dataset_dir)
+    print('{}.jpg'.format(name))
     #image_data, shape, bboxes, labels, labels_text, difficult, truncated = \
     #    _process_image(dataset_dir, name)
     
@@ -169,9 +170,8 @@ def run(dataset_dir, output_dir, name='ucf_train', shuffling=False):
     with open(pickle_file, 'rb') as fid:
         cache = pickle.load(fid, encoding='latin1')
     
-    if name == 'ucf_train':
-        video_list = cache['train_videos'][0]
-    elif name == 'ucf_test':
+    video_list = cache['train_videos'][0]
+    if name == 'ucf_test':
         video_list = cache['test_videos'][0]
 
     if shuffling:
@@ -179,7 +179,7 @@ def run(dataset_dir, output_dir, name='ucf_train', shuffling=False):
         random.shuffle(video_list)
 
     # Process dataset files.
-    i = 0; j=0
+    i = 0; j=0; k=0
     fidx = 0
     video_path = video_list[i]
     video_frame_list = _get_frames_filename(video_path)
@@ -187,8 +187,11 @@ def run(dataset_dir, output_dir, name='ucf_train', shuffling=False):
     while i < len(video_list):
         sys.stdout.write('\r>> Converting video %d/%d' % (i+1, len(video_list)))
         sys.stdout.flush()
+        print(video_list[i])
+        i += 1
         with tf.python_io.TFRecordWriter(tf_filename) as tfrecord_writer:
-            while j < SAMPLES_PER_FILES and k < len(video_frame_list):
+            nframes = len(video_frame_list)
+            while j < SAMPLES_PER_FILES and k < nframes:
 
                 frame_code = video_frame_list.pop()
                 _add_to_tfrecord(dataset_dir, frame_code, tfrecord_writer)
@@ -199,14 +202,13 @@ def run(dataset_dir, output_dir, name='ucf_train', shuffling=False):
             if len(video_frame_list) == 0:
                 i += 1
                 video_path = video_list[i]
-                video_frame_list = _get_video_frames(video_path)
+                video_frame_list = _get_frames_filename(video_path)
             
             # if tfrecord is full
-            if j = SAMPLES_PER_FILES:
+            if j == SAMPLES_PER_FILES:
                 j = 0
                 fidx += 1
                 tf_filename = _get_output_filename(output_dir, name, fidx)
-
         #print("Converting image {}/{}".format(i, len(filenames)))
 
     # Finally, write the labels file:
