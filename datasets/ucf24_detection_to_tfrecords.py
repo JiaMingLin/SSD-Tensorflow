@@ -43,8 +43,8 @@ def _process_image(video_frame_dir, frame_code, CACHE):
     image_raw_data = tf.gfile.GFile(img_file, 'rb').read()
 
     resol = CACHE['resolution'][video_frame_dir]
-    height, width = resol[0], resol[1]
-    shape = [height, width, 3]
+    hight, width = resol[0], resol[1]
+    shape = [hight, width, 3]
     # Read the annotations
     cate = video_frame_dir.split('/')[0]
     cate_code = LABEL_MAP[cate]
@@ -161,11 +161,12 @@ def run(dataset_dir, output_dir, name='ucf_train', shuffling=False):
     # Process dataset files.
     i=0; j=0; k=0
     fidx = 0
+    numvideo = len(video_list)
     video_path = video_list.pop()
     video_frame_list = _get_frames_filename(video_path)
     tf_filename = _get_output_filename(output_dir, name, fidx)
     while len(video_list) > 0:
-        sys.stdout.write('\r>> Converting video %d/%d' % (i+1, len(video_list)))
+        sys.stdout.write('\r>> Converting video %d/%d' % (i+1, numvideo))
         sys.stdout.flush()
         with tf.python_io.TFRecordWriter(tf_filename) as tfrecord_writer:
             while j < SAMPLES_PER_FILES and len(video_frame_list) > 0:
