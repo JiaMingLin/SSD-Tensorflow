@@ -41,11 +41,9 @@ def _process_image(video_frame_dir, frame_code, CACHE):
 
     # TODO: image processing in tensorflow
     image_raw_data = tf.gfile.GFile(img_file, 'rb').read()
-    image = tf.image.decode_jpeg(image_raw_data)
-    with tf.Session() as sess:
-        hight, width, channel = image.eval().shape
 
-    shape = [hight, width, channel]
+    resol = CACHE['resolution'][video_frame_dir]
+    shape = [resol[0], resol[1], 3]
     # Read the annotations
     cate = video_frame_dir.split('/')[0]
     cate_code = LABEL_MAP[cate]
