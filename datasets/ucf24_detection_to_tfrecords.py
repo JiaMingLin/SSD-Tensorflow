@@ -11,22 +11,21 @@ from datasets.dataset_utils import int64_feature, float_feature, bytes_feature
 # Original dataset organisation.
 DIRECTORY_ANNOTATIONS = 'UCF101-GT.pkl'
 DIRECTORY_IMAGES = 'data/UCF101_24_Frame/Frames/'
-CACHE = None
 
 # TFRecords convertion parameters.
 RANDOM_SEED = 4242
 SAMPLES_PER_FILES = 200
 
 LABEL_MAP = {
-    'None': 0, 'Basketball':1, 'BasketballDunk': 2, 'Biking': 3, 
-    'CliffDiving':4, 'CricketBowling':5, 'Diving':6, 'Fencing':7, 
-    'FloorGymnastics':8, 'GolfSwing':9, 'HorseRiding':10, 'IceDancing':11, 
-    'LongJump':12, 'PoleVault':13, 'RopeClimbing':14, 'SalsaSpin':15, 
-    'SkateBoarding':16, 'Skiing':17, 'Skijet':18, 'SoccerJuggling':19, 
-    'Surfing':20, 'TennisSwing':21, 'TrampolineJumping':22, 'VolleyballSpiking':23, 'WalkingWithDog':24}
+    'None': 24, 'Basketball':0, 'BasketballDunk': 1, 'Biking': 2, 
+    'CliffDiving':3, 'CricketBowling':4, 'Diving':5, 'Fencing':6, 
+    'FloorGymnastics':7, 'GolfSwing':8, 'HorseRiding':9, 'IceDancing':10, 
+    'LongJump':11, 'PoleVault':12, 'RopeClimbing':13, 'SalsaSpin':14, 
+    'SkateBoarding':15, 'Skiing':16, 'Skijet':17, 'SoccerJuggling':18, 
+    'Surfing':19, 'TennisSwing':20, 'TrampolineJumping':21, 'VolleyballSpiking':22, 'WalkingWithDog':23}
 
 
-def _process_image(video_frame_dir, frame_code):
+def _process_image(video_frame_dir, frame_code, CACHE):
     """Process a image and annotation file.
 
     Args:
@@ -38,7 +37,7 @@ def _process_image(video_frame_dir, frame_code):
       width: integer, image width in pixels.
     """
     # Read the image file.
-    img_file = os.join.path(DIRECTORY_IMAGES, video_frame_dir, '{}.jpg'.format(frame_code))
+    img_file = os.path.join(DIRECTORY_IMAGES, video_frame_dir, '{}.jpg'.format(frame_code))
 
     # TODO: image processing in tensorflow
     image_raw_data = tf.gfile.GFile(img_file, 'rb').read()
@@ -46,7 +45,7 @@ def _process_image(video_frame_dir, frame_code):
     with tf.Session() as sess:
         hight, width, channel = image.eval().shape
 
-    shape = (hight, width, channel)
+    shape = [hight, width, channel]
     # Read the annotations
     cate = video_frame_dir.split('/')[0]
     cate_code = LABEL_MAP[cate]
@@ -60,7 +59,7 @@ def _process_image(video_frame_dir, frame_code):
             frame_id = int(box[0])
             if frame_id == int(frame_code):
                 labels.append(cate_code)
-                labels_text.append(cate)
+                labels_text.append(cate.encode('ascii'))
                 ymin, xmin = box[1], box[2]
                 ymax, xmax = box[3], box[4]
                 ymin = max(ymin/hight, 0)
@@ -73,7 +72,7 @@ def _process_image(video_frame_dir, frame_code):
                        max(xmax,0)
                        ))
 
-    return image_data, shape, bboxes, labels, labels_text
+    return image_raw_data, shape, bboxes, labels, labels_text
 
 
 def _convert_to_example(image_data, labels, labels_text, bboxes, shape):
@@ -117,14 +116,14 @@ def _convert_to_example(image_data, labels, labels_text, bboxes, shape):
     return example
 
 
-def _add_to_tfrecord(video_frame_dir, frame_code, tfrecord_writer):
+def _add_to_tfrecord(video_frame_dir, frame_code, tfrecord_writer, CACHE):
     """Loads data from image and annotations files and add them to a TFRecord.
     Args:
       video_frame_ls: Dataset directory to video frames;
       frame_code: Image name to add to the TFRecord;
       tfrecord_writer: The TFRecord writer to use for writing.
     """
-    image_data, shape, bboxes, labels, labels_text = _process_image(video_frame_dir, frame_code)
+    image_data, shape, bboxes, labels, labels_text = _process_image(video_frame_dir, frame_code, CACHE)
     
     example = _convert_to_example(image_data, labels, labels_text, bboxes, shape)
     tfrecord_writer.write(example.SerializeToString())
@@ -172,7 +171,7 @@ def run(dataset_dir, output_dir, name='ucf_train', shuffling=False):
             while j < SAMPLES_PER_FILES and len(video_frame_list) > 0:
 
                 frame_code = video_frame_list.pop()
-                _add_to_tfrecord(video_path, frame_code, tfrecord_writer)
+                _add_to_tfrecord(video_path, frame_code, tfrecord_writer, CACHE)
                 j += 1
 
             # finish on video, new one

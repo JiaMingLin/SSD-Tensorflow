@@ -25,3 +25,4 @@ ssd-tensorflow.sublime-project
 
 ._*
 test_case/*
+data/*
