@@ -127,6 +127,7 @@ def _add_to_tfrecord(video_frame_dir, frame_code, tfrecord_writer, CACHE):
     
     example = _convert_to_example(image_data, labels, labels_text, bboxes, shape)
     tfrecord_writer.write(example.SerializeToString())
+    #tfrecord_writer.write('example'.encode('ascii'))
 
 def _get_frames_filename(video_path):
     images_files = os.listdir(os.path.join(DIRECTORY_IMAGES, video_path))
