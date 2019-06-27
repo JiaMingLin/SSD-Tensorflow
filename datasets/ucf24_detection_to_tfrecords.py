@@ -43,7 +43,8 @@ def _process_image(video_frame_dir, frame_code, CACHE):
     image_raw_data = tf.gfile.GFile(img_file, 'rb').read()
 
     resol = CACHE['resolution'][video_frame_dir]
-    shape = [resol[0], resol[1], 3]
+    height, width = resol[0], resol[1]
+    shape = [height, width, 3]
     # Read the annotations
     cate = video_frame_dir.split('/')[0]
     cate_code = LABEL_MAP[cate]
