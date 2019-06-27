@@ -138,7 +138,7 @@ def _get_output_filename(output_dir, name, idx):
     return '%s/%s_%03d.tfrecord' % (output_dir, name, idx)
 
 
-def run(dataset_dir, output_dir, name='ucf_train', shuffling=False):
+def run(dataset_dir, output_dir, name='ucf24_detection_train', shuffling=False):
     """Runs the conversion operation.
     Args:
       dataset_dir: The dataset directory where the dataset is stored. UCF101-24
@@ -152,7 +152,7 @@ def run(dataset_dir, output_dir, name='ucf_train', shuffling=False):
         CACHE = pickle.load(fid, encoding='latin1')
     
     video_list = CACHE['train_videos'][0]
-    if name == 'ucf_test':
+    if name == 'ucf24_detection_train':
         video_list = CACHE['test_videos'][0]
 
     if shuffling:
