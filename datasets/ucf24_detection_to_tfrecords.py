@@ -48,16 +48,16 @@ def _process_image(video_frame_dir, frame_code, CACHE):
     # Read the annotations
     cate = video_frame_dir.split('/')[0]
     cate_code = LABEL_MAP[cate]
-    object_list = CACHE['gttubes'][video_frame_dir][cate_code]
+    action_tube_dict = CACHE['gttubes'][video_frame_dir]
 
     bboxes = []
     labels = []
     labels_text = []
-    for obj in object_list:
-        for box in obj:
+    for action_code, tube in action_tube_dict.items():
+        for box in tube:
             frame_id = int(box[0])
             if frame_id == int(frame_code):
-                labels.append(cate_code)
+                labels.append(action_code)
                 labels_text.append(cate.encode('ascii'))
                 ymin, xmin = box[1], box[2]
                 ymax, xmax = box[3], box[4]
