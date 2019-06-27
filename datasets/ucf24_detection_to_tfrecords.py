@@ -14,7 +14,7 @@ DIRECTORY_IMAGES = 'data/UCF101_24_Frame/Frames/'
 
 # TFRecords convertion parameters.
 RANDOM_SEED = 4242
-SAMPLES_PER_FILES = 200
+SAMPLES_PER_FILES = 1600
 
 LABEL_MAP = {
     'None': 24, 'Basketball':0, 'BasketballDunk': 1, 'Biking': 2, 
