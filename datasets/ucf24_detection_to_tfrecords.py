@@ -9,89 +9,74 @@ import tensorflow as tf
 from datasets.dataset_utils import int64_feature, float_feature, bytes_feature
 
 # Original dataset organisation.
-DIRECTORY_ANNOTATIONS = 'annotations/'
+DIRECTORY_ANNOTATIONS = 'UCF101-GT.pkl'
 DIRECTORY_IMAGES = 'data/UCF101_24_Frame/Frames/'
+CACHE = None
 
 # TFRecords convertion parameters.
 RANDOM_SEED = 4242
 SAMPLES_PER_FILES = 200
 
 LABEL_MAP = {
-    'none': 0,
-    'baseball':1, 'basketball':2, 'bike':3, 'climb_stair':4, 
-             'eat':5, 'jump':6, 'raft':7, 'ride_motor':8, 'run':9, 
-             'shake_hands':10, 'ski':11, 'surf':12, 'tennis':13, 'walk':14
-}
+    'None': 0, 'Basketball':1, 'BasketballDunk': 2, 'Biking': 3, 
+    'CliffDiving':4, 'CricketBowling':5, 'Diving':6, 'Fencing':7, 
+    'FloorGymnastics':8, 'GolfSwing':9, 'HorseRiding':10, 'IceDancing':11, 
+    'LongJump':12, 'PoleVault':13, 'RopeClimbing':14, 'SalsaSpin':15, 
+    'SkateBoarding':16, 'Skiing':17, 'Skijet':18, 'SoccerJuggling':19, 
+    'Surfing':20, 'TennisSwing':21, 'TrampolineJumping':22, 'VolleyballSpiking':23, 'WalkingWithDog':24}
 
 
-def _process_image(directory, name):
+def _process_image(video_frame_dir, frame_code):
     """Process a image and annotation file.
 
     Args:
-      filename: string, path to an image file e.g., '/path/to/example.JPG'.
-      coder: instance of ImageCoder to provide TensorFlow image coding utils.
+      video_frame_dir: string, path to video frame directory e.g., 'Basketball/v_Basketball_g08_c02'.
+      frame_code: the frame image file name
     Returns:
       image_buffer: string, JPEG encoding of RGB image.
       height: integer, image height in pixels.
       width: integer, image width in pixels.
     """
     # Read the image file.
-    img_filename = os.join.path(directory, )
+    img_file = os.join.path(DIRECTORY_IMAGES, video_frame_dir, '{}.jpg'.format(frame_code))
 
+    # TODO: image processing in tensorflow
+    image_raw_data = tf.gfile.GFile(img_file, 'rb').read()
+    image = tf.image.decode_jpeg(image_raw_data)
+    with tf.Session() as sess:
+        hight, width, channel = image.eval().shape
 
+    shape = (hight, width, channel)
+    # Read the annotations
+    cate = video_frame_dir.split('/')[0]
+    cate_code = LABEL_MAP[cate]
+    object_list = CACHE['gttubes'][video_frame_dir][cate_code]
 
-    filename = directory + DIRECTORY_IMAGES + name + '.jpg'
-    image_data = tf.gfile.FastGFile(filename, 'rb').read()
-
-    # Read the XML annotation file.
-    filename = os.path.join(directory, DIRECTORY_ANNOTATIONS, name + '.xml')
-    tree = ET.parse(filename)
-    root = tree.getroot()
-
-    # Image shape.
-    shape = [int(root.find('height').text),
-             int(root.find('width').text),
-             int(root.find('depth').text)]
-    # Find annotations.
     bboxes = []
     labels = []
     labels_text = []
-    difficult = []
-    truncated = []
-    for obj in root.findall('object'):
-        label = obj.find('name').text
-        labels.append(int(LABEL_MAP[label]))
-        labels_text.append(label.encode('ascii'))
-
-        if obj.find('difficult'):
-            difficult.append(int(obj.find('difficult').text))
-        else:
-            difficult.append(0)
-        if obj.find('truncated'):
-            truncated.append(int(obj.find('truncated').text))
-        else:
-            truncated.append(0)
-
-        bbox = obj.find('bndbox')
-        ymin = max(float(bbox.find('ymin').text) / shape[0], 0)
-        xmin = max(float(bbox.find('xmin').text) / shape[1], 0)
-        ymax = min(float(bbox.find('ymax').text) / shape[0], 1.0)
-        xmax = min(float(bbox.find('xmax').text) / shape[1], 1.0)
-        """
-        if (ymin < 0 or ymin > 1) or (xmin < 0 or xmin > 1) or (xmax < 0 or xmax > 1) or (ymax < 0 or ymax > 1):
-            print(name)
-            print("ymin: {}, xmin: {}, ymax: {}, xmax: {}".format(ymin, xmin, ymax, xmax))
-        """
-        bboxes.append((min(ymin,1.0),
+    for obj in object_list:
+        for box in obj:
+            frame_id = int(box[0])
+            if frame_id == int(frame_code):
+                labels.append(cate_code)
+                labels_text.append(cate)
+                ymin, xmin = box[1], box[2]
+                ymax, xmax = box[3], box[4]
+                ymin = max(ymin/hight, 0)
+                xmin = max(xmin / width, 0)
+                ymax = min(ymax / hight, 1.0)
+                xmax = min(xmax / width, 1.0)
+                bboxes.append((min(ymin,1.0),
                        min(xmin,1.0),
                        max(ymax,0),
                        max(xmax,0)
                        ))
-    return image_data, shape, bboxes, labels, labels_text, difficult, truncated
+
+    return image_data, shape, bboxes, labels, labels_text
 
 
-def _convert_to_example(image_data, labels, labels_text, bboxes, shape,
-                        difficult):
+def _convert_to_example(image_data, labels, labels_text, bboxes, shape):
     """Build an Example proto for an image example.
     Args:
       image_data: string, JPEG encoding of RGB image;
@@ -126,27 +111,23 @@ def _convert_to_example(image_data, labels, labels_text, bboxes, shape,
             'image/object/bbox/ymax': float_feature(ymax),
             'image/object/bbox/label': int64_feature(labels),
             'image/object/bbox/label_text': bytes_feature(labels_text),
-            'image/object/bbox/difficult': int64_feature(difficult),
+            #'image/object/bbox/difficult': int64_feature(difficult),
             'image/format': bytes_feature(image_format),
             'image/encoded': bytes_feature(image_data)}))
     return example
 
 
-def _add_to_tfrecord(dataset_dir, name, tfrecord_writer):
+def _add_to_tfrecord(video_frame_dir, frame_code, tfrecord_writer):
     """Loads data from image and annotations files and add them to a TFRecord.
     Args:
-      dataset_dir: Dataset directory;
-      name: Image name to add to the TFRecord;
+      video_frame_ls: Dataset directory to video frames;
+      frame_code: Image name to add to the TFRecord;
       tfrecord_writer: The TFRecord writer to use for writing.
     """
-    print('dataset_dir: ', dataset_dir)
-    print('{}.jpg'.format(name))
-    #image_data, shape, bboxes, labels, labels_text, difficult, truncated = \
-    #    _process_image(dataset_dir, name)
+    image_data, shape, bboxes, labels, labels_text = _process_image(video_frame_dir, frame_code)
     
-    #example = _convert_to_example(image_data, labels, labels_text,
-     #                             bboxes, shape, difficult)
-    #tfrecord_writer.write(example.SerializeToString())
+    example = _convert_to_example(image_data, labels, labels_text, bboxes, shape)
+    tfrecord_writer.write(example.SerializeToString())
 
 def _get_frames_filename(video_path):
     images_files = os.listdir(os.path.join(DIRECTORY_IMAGES, video_path))
@@ -165,14 +146,14 @@ def run(dataset_dir, output_dir, name='ucf_train', shuffling=False):
     """
 
     # Dataset filenames, and shuffling.
-    pickle_file = os.path.join(dataset_dir, 'UCF101-GT.pkl')
+    pickle_file = os.path.join(dataset_dir, DIRECTORY_ANNOTATIONS)
     
     with open(pickle_file, 'rb') as fid:
-        cache = pickle.load(fid, encoding='latin1')
+        CACHE = pickle.load(fid, encoding='latin1')
     
-    video_list = cache['train_videos'][0]
+    video_list = CACHE['train_videos'][0]
     if name == 'ucf_test':
-        video_list = cache['test_videos'][0]
+        video_list = CACHE['test_videos'][0]
 
     if shuffling:
         random.seed(RANDOM_SEED)
