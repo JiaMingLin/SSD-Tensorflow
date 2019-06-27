@@ -53,19 +53,20 @@ def _process_image(video_frame_dir, frame_code, CACHE):
     bboxes = []
     labels = []
     labels_text = []
-    for action_code, tube in action_tube_dict.items():
-        for box in tube:
-            frame_id = int(box[0])
-            if frame_id == int(frame_code):
-                labels.append(action_code)
-                labels_text.append(cate.encode('ascii'))
-                ymin, xmin = box[1], box[2]
-                ymax, xmax = box[3], box[4]
-                ymin = max(ymin/hight, 0)
-                xmin = max(xmin / width, 0)
-                ymax = min(ymax / hight, 1.0)
-                xmax = min(xmax / width, 1.0)
-                bboxes.append((min(ymin,1.0),
+    for action_code, tube_list in action_tube_dict.items():
+        for tube in tube_list:
+            for box in tube:
+                frame_id = int(box[0])
+                if frame_id == int(frame_code):
+                    labels.append(action_code)
+                    labels_text.append(cate.encode('ascii'))
+                    ymin, xmin = box[1], box[2]
+                    ymax, xmax = box[3], box[4]
+                    ymin = max(ymin/hight, 0)
+                    xmin = max(xmin / width, 0)
+                    ymax = min(ymax / hight, 1.0)
+                    xmax = min(xmax / width, 1.0)
+                    bboxes.append((min(ymin,1.0),
                        min(xmin,1.0),
                        max(ymax,0),
                        max(xmax,0)
