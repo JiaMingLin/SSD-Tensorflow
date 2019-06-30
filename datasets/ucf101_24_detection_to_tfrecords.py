@@ -110,7 +110,7 @@ def _convert_to_example(image_data, labels, labels_text, bboxes, shape):
             'image/object/bbox/ymax': float_feature(ymax),
             'image/object/bbox/label': int64_feature(labels),
             'image/object/bbox/label_text': bytes_feature(labels_text),
-            #'image/object/bbox/difficult': int64_feature(difficult),
+            'image/object/bbox/difficult': int64_feature(0),
             'image/format': bytes_feature(image_format),
             'image/encoded': bytes_feature(image_data)}))
     return example
