@@ -14,8 +14,8 @@ ITEMS_TO_DESCRIPTIONS = {
 }
 
 SPLITS_TO_SIZES = {
-    'train': 852,
-    'test': 3655
+    'train': 396599,
+    'test': 159758
 }
 
 NUM_CLASSES = 24
@@ -57,7 +57,7 @@ def get_split(split_name, dataset_dir, file_pattern=None, reader=None):
         'image/object/bbox/xmax': tf.VarLenFeature(dtype=tf.float32),
         'image/object/bbox/ymax': tf.VarLenFeature(dtype=tf.float32),
         'image/object/bbox/label': tf.VarLenFeature(dtype=tf.int64),
-        'image/object/bbox/difficult': tf.VarLenFeature(dtype=tf.int64),
+        #'image/object/bbox/difficult': tf.VarLenFeature(dtype=tf.int64),
         #'image/object/bbox/truncated': tf.VarLenFeature(dtype=tf.int64),
     }
     items_to_handlers = {
@@ -66,7 +66,7 @@ def get_split(split_name, dataset_dir, file_pattern=None, reader=None):
         'object/bbox': slim.tfexample_decoder.BoundingBox(
                 ['ymin', 'xmin', 'ymax', 'xmax'], 'image/object/bbox/'),
         'object/label': slim.tfexample_decoder.Tensor('image/object/bbox/label'),
-        'object/difficult': slim.tfexample_decoder.Tensor('image/object/bbox/difficult'),
+        #'object/difficult': slim.tfexample_decoder.Tensor('image/object/bbox/difficult'),
         #'object/truncated': slim.tfexample_decoder.Tensor('image/object/bbox/truncated'),
     }
     decoder = slim.tfexample_decoder.TFExampleDecoder(
