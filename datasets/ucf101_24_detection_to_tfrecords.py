@@ -166,6 +166,7 @@ def run(dataset_dir, output_dir, name='ucf101_24_detection_train', shuffling=Fal
     video_path = video_list.pop()
     video_frame_list = _get_frames_filename(video_path)
     tf_filename = _get_output_filename(output_dir, name, fidx)
+    total_frames = 0
     while len(video_list) > 0:
         sys.stdout.write('\r>> Converting video %d/%d' % (i+1, numvideo))
         sys.stdout.flush()
@@ -175,6 +176,7 @@ def run(dataset_dir, output_dir, name='ucf101_24_detection_train', shuffling=Fal
                 frame_code = video_frame_list.pop()
                 _add_to_tfrecord(video_path, frame_code, tfrecord_writer, CACHE)
                 j += 1
+                total_frames += 1
 
             # finish on video, new one
             if len(video_frame_list) == 0:
@@ -193,3 +195,4 @@ def run(dataset_dir, output_dir, name='ucf101_24_detection_train', shuffling=Fal
     # labels_to_class_names = dict(zip(range(len(_CLASS_NAMES)), _CLASS_NAMES))
     # dataset_utils.write_label_file(labels_to_class_names, dataset_dir)
     print('\nFinished converting the UCF101-24 dataset!')
+    print('Total frames: {}'.format(total_frames))
