@@ -33,7 +33,8 @@ datasets_map = {
     'pascalvoc_2007': pascalvoc_2007,
     'pascalvoc_2012': pascalvoc_2012,
     'dota': dota,
-    'drone_detection': drone_detection
+    'drone_detection': drone_detection,
+    'ucf101_24': ucf101_24
 }
 
 datasets_map_tf = {
