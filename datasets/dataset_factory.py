@@ -27,7 +27,7 @@ from datasets import pascalvoc_2012
 from datasets import dota
 from datasets import drone_detection, drone_detection_to_tfrecords
 
-from datasets import ucf101_24, 
+from datasets import ucf101_24, ucf101_24_detection_to_tfrecords
 
 datasets_map = {
     'cifar10': cifar10,
