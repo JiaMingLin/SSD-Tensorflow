@@ -72,6 +72,11 @@ def _process_image(video_frame_dir, frame_code, CACHE):
                        max(xmax,0)
                        ))
 
+    if len(labels) == 0:
+        labels.append(LABEL_MAP['None'])
+        labels_text.append('None'.encode('ascii'))
+        bboxes.append((0,0,0,0))
+        
     return image_raw_data, shape, bboxes, labels, labels_text
 
 
