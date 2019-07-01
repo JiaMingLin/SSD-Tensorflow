@@ -124,7 +124,7 @@ def _add_to_tfrecord(video_frame_dir, frame_code, tfrecord_writer, CACHE):
       tfrecord_writer: The TFRecord writer to use for writing.
     """
     image_data, shape, bboxes, labels, labels_text = _process_image(video_frame_dir, frame_code, CACHE)
-    if len(labels) == 0:
+    if len(labels) == 0 or len(bboxes) == 0:
         return False
     
     example = _convert_to_example(image_data, labels, labels_text, bboxes, shape)
