@@ -71,11 +71,6 @@ def _process_image(video_frame_dir, frame_code, CACHE):
                        max(ymax,0),
                        max(xmax,0)
                        ))
-
-    if len(labels) == 0:
-        labels.append(LABEL_MAP['None'])
-        labels_text.append('None'.encode('ascii'))
-        bboxes.append((0,0,0,0))
         
     return image_raw_data, shape, bboxes, labels, labels_text
 
@@ -129,9 +124,12 @@ def _add_to_tfrecord(video_frame_dir, frame_code, tfrecord_writer, CACHE):
       tfrecord_writer: The TFRecord writer to use for writing.
     """
     image_data, shape, bboxes, labels, labels_text = _process_image(video_frame_dir, frame_code, CACHE)
+    if len(labels) == 0:
+        return False
     
     example = _convert_to_example(image_data, labels, labels_text, bboxes, shape)
     tfrecord_writer.write(example.SerializeToString())
+    return True
     #tfrecord_writer.write('example'.encode('ascii'))
 
 def _get_frames_filename(video_path):
@@ -179,9 +177,10 @@ def run(dataset_dir, output_dir, name='ucf101_24_detection_train', shuffling=Fal
             while j < SAMPLES_PER_FILES and len(video_frame_list) > 0:
 
                 frame_code = video_frame_list.pop()
-                _add_to_tfrecord(video_path, frame_code, tfrecord_writer, CACHE)
-                j += 1
-                total_frames += 1
+                added = _add_to_tfrecord(video_path, frame_code, tfrecord_writer, CACHE)
+                if added:
+                    j += 1
+                    total_frames += 1
 
             # finish on video, new one
             if len(video_frame_list) == 0:
